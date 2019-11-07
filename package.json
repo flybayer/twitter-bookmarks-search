@@ -1,0 +1,24 @@
+{
+  "name": "next-web-extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node next-dev-server.js",
+    "dev:content": "parcel watch content-script.js -d out",
+    "start:firefox": "web-ext run -s out",
+    "start:chrome": "web-ext run -s out -t chromium",
+    "build": "yarn run build:next && yarn run build:content",
+    "build:next": "next build && next export && mkdir out/assets && mv out/_next out/assets/",
+    "build:content": "parcel build content-script.js -d out"
+  },
+  "dependencies": {
+    "next": "9.1.2",
+    "react": "16.11.0",
+    "react-dom": "16.11.0",
+    "webextension-polyfill": "0.5.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "1.12.4",
+    "web-ext": "3.2.1"
+  }
+}

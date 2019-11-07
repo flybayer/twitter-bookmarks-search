@@ -1,0 +1,35 @@
+{
+  "name": "next-webextension",
+  "version": "0.1",
+  "description": "TODO",
+
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "browser_action": {
+    "default_title": "Nextjs",
+    "default_popup": "popup.html"
+  },
+
+  "permissions": [
+    "activeTab",
+    "bookmarks",
+    "identity"
+  ],
+
+ "background": {
+    "page": "background.html"
+	},
+
+	"content_scripts": [
+		{
+			"matches": ["*://*.google.com/*"],
+			"js": ["content-script.js"]
+		}
+	],
+
+  "content_security_policy": "script-src 'self' 'sha256-4qHwYstA/HMoqYktYjfAnyNPmBqLeAqunX99JaEvimc=' http://localhost:1234; object-src 'self'",
+
+
+  "manifest_version": 2
+}
