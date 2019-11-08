@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node next-dev-server.js",
-    "dev:content": "parcel watch content-script.js -d out",
-    "start:firefox": "web-ext run -s out",
-    "start:chrome": "web-ext run -s out -t chromium",
+    "start": "node next-dev-server.js",
+    "start:content": "parcel watch content-script.js -d out",
+    "start:firefox": "web-ext run -s out --url https://twitter.com/i/bookmarks --keep-profile-changes",
+    "start:chrome": "web-ext run -s out -t chromium --url https://twitter.com/i/bookmarks --keep-profile-changes",
     "build": "yarn run build:next && yarn run build:content",
     "build:next": "next build && next export && mkdir out/assets && mv out/_next out/assets/",
     "build:content": "parcel build content-script.js -d out"
   },
+  "browserslist": [
+    "last 2 chrome versions"
+  ],
   "dependencies": {
+    "delay": "4.3.0",
     "next": "9.1.2",
     "react": "16.11.0",
     "react-dom": "16.11.0",
