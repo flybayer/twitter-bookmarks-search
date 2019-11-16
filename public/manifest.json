@@ -4,7 +4,7 @@
   "version": "1",
   "description": "Finally search all your Twitter Bookmarks!",
 
-  "icons": { "128": "icon128.png" },
+  "icons": { "16": "icon128.png", "48": "icon128.png", "128": "icon128.png" },
 
   "permissions": ["webRequest", "*://*.twitter.com/*"],
 

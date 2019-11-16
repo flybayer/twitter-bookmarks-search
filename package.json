@@ -4,14 +4,17 @@
   "private": true,
   "scripts": {
     "postinstall": "patch-package",
-    "start": "node next-dev-server.js",
+    "start": "concurrently \"yarn:start:next\" \"sleep 4 && yarn start:content\"",
+    "start:next": "node next-dev-server.js",
     "start:content": "parcel watch content-script.js -d out",
-    "start:firefox": "web-ext run -s out --url https://twitter.com/i/bookmarks --keep-profile-changes",
-    "start:chrome": "web-ext run -s out -t chromium --url https://twitter.com/i/bookmarks --keep-profile-changes",
-    "build": "yarn run build:next && yarn run build:content",
+    "open:firefox": "web-ext run -s out --url https://twitter.com/i/bookmarks --keep-profile-changes",
+    "open:chrome": "web-ext run -s out -t chromium --url https://twitter.com/i/bookmarks --keep-profile-changes",
+    "build": "yarn run build:next && yarn run build:content && yarn run build:manifest",
     "build:next": "next build && next export && mkdir out/assets && mv out/_next out/assets/",
     "build:content": "parcel build content-script.js -d out",
-    "pack:chrome": "zip -r out.zip out"
+    "build:manifest": "sed -i '' 's/ http:..localhost:....//' out/manifest.json",
+    "pack": "web-ext build -s out -a dist -o",
+    "release": "yarn run build && yarn run pack"
   },
   "browserslist": [
     "last 2 chrome versions"
@@ -32,6 +35,7 @@
   "devDependencies": {
     "babel-core": "6.26.3",
     "babel-plugin-transform-class-properties": "6.24.1",
+    "concurrently": "5.0.0",
     "parcel-bundler": "1.12.4",
     "web-ext": "3.2.1"
   }
