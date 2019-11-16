@@ -15,7 +15,7 @@
     "build:content": "parcel build content-script.js -d out",
     "build:manifest": "sed -i '' 's/ http:..localhost:....//' out/manifest.json",
     "pack": "web-ext build -s out -a dist -o",
-    "release": "yarn run build && yarn run pack"
+    "release": "yarn run build && yarn run pack && git archive -o dist/source-code.zip HEAD"
   },
   "browserslist": [
     "last 2 chrome versions"
