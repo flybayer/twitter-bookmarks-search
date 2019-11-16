@@ -10,7 +10,8 @@
     "start:chrome": "web-ext run -s out -t chromium --url https://twitter.com/i/bookmarks --keep-profile-changes",
     "build": "yarn run build:next && yarn run build:content",
     "build:next": "next build && next export && mkdir out/assets && mv out/_next out/assets/",
-    "build:content": "parcel build content-script.js -d out"
+    "build:content": "parcel build content-script.js -d out",
+    "pack:chrome": "zip -r out.zip out"
   },
   "browserslist": [
     "last 2 chrome versions"
@@ -20,6 +21,7 @@
     "match-sorter": "4.0.2",
     "next": "9.1.2",
     "patch-package": "6.2.0",
+    "plur": "3.1.1",
     "postinstall-postinstall": "2.0.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",

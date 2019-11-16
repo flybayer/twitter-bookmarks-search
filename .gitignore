@@ -7,6 +7,7 @@ web/assets
 dist
 dist-web
 out
+out.zip
 .next
 .cache
 .parcel-cache

@@ -1,9 +1,12 @@
 {
   "name": "Twitter Bookmarks Search",
-  "version": "0.1",
-  "description": "Finally search all your Twitter Bookmarks",
+  "short_name": "TB Search",
+  "version": "1",
+  "description": "Finally search all your Twitter Bookmarks!",
 
-  "permissions": ["webRequest", "webRequestBlocking", "*://*.twitter.com/*"],
+  "icons": { "128": "icon128.png" },
+
+  "permissions": ["webRequest", "*://*.twitter.com/*"],
 
  "background": {
     "page": "background.html"
@@ -17,7 +20,6 @@
 	],
 
   "content_security_policy": "script-src 'self' http://localhost:1234; object-src 'self'",
-
 
   "manifest_version": 2
 }

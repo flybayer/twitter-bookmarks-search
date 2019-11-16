@@ -3,8 +3,9 @@ import ReactDOM from "react-dom"
 import delay from "delay"
 import matchSorter from "match-sorter"
 import tweet2Html from "tweet-html"
+import plur from "plur"
 
-console.log("Hello from nextjs content script!")
+// console.log("Hello from nextjs content script!")
 
 const browser = require("webextension-polyfill")
 
@@ -12,7 +13,7 @@ let authorization
 let csrfToken
 
 async function messageListener(message) {
-  console.log("Received message", message)
+  // console.log("Received message", message)
   if (message.name === "credentials") {
     authorization = message.authorization
     csrfToken = message.csrfToken
@@ -29,9 +30,9 @@ async function fetchBookmarks() {
     return console.log("csrfToken is blank")
   }
 
-  console.log("Fetching bookmarks...")
+  // console.log("Fetching bookmarks...")
   const res = await fetch(
-    "https://api.twitter.com/2/timeline/bookmark.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_composer_source=true&include_ext_alt_text=true&include_reply_count=1&tweet_mode=extended&include_entities=true&include_ext_media_color=true&include_ext_media_availability=true&send_error_codes=true&count=2000&ext=mediaStats%2ChighlightedLabel%2CcameraMoment&simple_quoted_tweet=true&include_user_entities=true",
+    "https://api.twitter.com/2/timeline/bookmark.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_composer_source=true&include_ext_alt_text=true&include_reply_count=1&tweet_mode=extended&include_entities=true&include_ext_media_color=true&include_ext_media_availability=true&send_error_codes=true&count=10000&ext=mediaStats%2ChighlightedLabel%2CcameraMoment&simple_quoted_tweet=true&include_user_entities=true",
     {
       credentials: "include",
       headers: {
@@ -75,12 +76,12 @@ function useBookmarkedTweets() {
           let tweets = Object.values(json.globalObjects.tweets)
           let users = json.globalObjects.users
           tweets = tweets.map(tweet => ({ ...tweet, user: users[tweet.user_id_str] }))
-          console.log("Loaded bookmarked tweets", tweets)
+          // console.log("Loaded bookmarked tweets", tweets)
           setTweets(tweets)
           success = true
         } catch (err) {
           await delay(50)
-          console.log("[fetchBookmarks] failed. Retrying...", err)
+          // console.log("[fetchBookmarks] failed. Retrying...", err)
         }
       }
     })()
@@ -93,19 +94,6 @@ function Content() {
   const [results, setResults] = React.useState(null)
   const tweets = useBookmarkedTweets()
 
-  async function onSubmit(event) {
-    event.preventDefault()
-    if (!tweets) {
-      return alert("Oh snap, no bookmarked tweets are loaded. Reload and try again")
-    }
-
-    const query = event.target.elements[0].value
-    console.log("Query", query)
-    const results = matchSorter(tweets, query, { keys: ["full_text"] })
-    console.log("Search results", results)
-    setResults(results)
-  }
-
   React.useEffect(() => {
     if (results) {
       getTimeline().style
@@ -115,13 +103,31 @@ function Content() {
     }
   }, [results])
 
+  async function onSubmit(event) {
+    event.preventDefault()
+    if (!tweets) {
+      return alert("Oh snap, no bookmarked tweets are loaded. Wait a little longer or reload to try again")
+    }
+
+    const query = event.target.elements[0].value
+    const results = matchSorter(tweets, query, {
+      keys: [
+        { key: "full_text", threshold: matchSorter.rankings.ACRONYM },
+        { key: "user.screen_name", threshold: matchSorter.rankings.ACRONYM },
+        { key: "user.name", threshold: matchSorter.rankings.ACRONYM },
+      ],
+      keepDiacritics: true,
+    })
+    console.log("Bookmark search results", results)
+    setResults(results)
+  }
+
   return (
     <div>
       <style>{css}</style>
       <style>{inputActive ? inputActiveCss : null}</style>
       <div style={{ padding: "8px 15px" }}>
         <SearchBox onSubmit={onSubmit} onClick={() => setInputActive(true)} />
-        {/* <div>Bookmarks loaded: {tweets ? tweets.length : "no"}</div> */}
         <div
           style={{
             margin: "4px 0",
@@ -131,7 +137,7 @@ function Content() {
             color: "#18bf64",
           }}
         >
-          Powered by{" "}
+          Sponsored by{" "}
           <a
             href="https://acornbookmarks.com"
             target="_blank"
@@ -144,7 +150,7 @@ function Content() {
       </div>
       {results ? (
         <div style={{ fontWeight: 800, fontSize: 19, margin: "12px 0 12px 74px" }}>
-          Found {results.length} results
+          Found {results.length} {plur("result", results.length)}
         </div>
       ) : null}
 
@@ -263,10 +269,10 @@ function SearchBox({ onSubmit, onClick }) {
   return <div ref={containerRef} />
 }
 
-;(async function() {
+async function render() {
   let timeline = getTimeline()
   while (!timeline) {
-    await delay(10)
+    await delay(20)
     timeline = getTimeline()
   }
 
@@ -277,4 +283,18 @@ function SearchBox({ onSubmit, onClick }) {
     timeline.prepend(root)
   }
   ReactDOM.render(<Content />, root)
-})()
+}
+
+async function waitForBookmarksPage() {
+  while (!window.location.href.includes("bookmarks")) {
+    console.log("waiting..")
+    await delay(500)
+  }
+  render()
+}
+
+if (location.href.includes("bookmarks")) {
+  render()
+} else {
+  waitForBookmarksPage()
+}
