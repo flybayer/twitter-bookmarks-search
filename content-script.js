@@ -61,6 +61,12 @@ async function fetchBookmarks() {
 const getTimeline = () => document.querySelector('[aria-label="Timeline: Bookmarks"]')
 const getTweetsContainer = () => document.querySelector('[aria-label="Timeline: Bookmarks"] > div:last-child')
 const getSearchBox = () => document.querySelector('[role="search"]')
+const getThemeBackground = () =>
+  document.querySelector("meta[name=theme-color]").attributes.content.textContent
+const getThemeAccentColor = () =>
+  getComputedStyle(document.querySelector('[aria-label="Tweet"]'), null).getPropertyValue("background-color")
+const getThemeTextColor = () =>
+  getComputedStyle(document.querySelector("main h2"), null).getPropertyValue("color")
 
 function useBookmarkedTweets() {
   const [tweets, setTweets] = React.useState(null)
@@ -122,6 +128,69 @@ function Content() {
     setResults(results)
   }
 
+  const inputActiveCss = `
+    #tbs-root form > div > div {
+      background: ${getThemeBackground()};
+      border: 1px solid ${getThemeAccentColor()};
+      border-radius: 9999px;
+    }
+  `
+
+  const css = `
+    #tbs-root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+      color: ${getThemeTextColor()};
+    }
+
+    .tweet-result-container {
+      display: flex;
+      border-bottom: 1px solid rgb(230, 236, 240);
+      padding: 10px 0;
+      transition-property: background-color;
+      transition-duration: 0.2s;
+      padding: 15px;
+    }
+
+    // .tweet-result-container:hover {
+    //   background-color: rgb(245,248,250);
+    // }
+
+    #tbs-root a, .tweet-result-container a:visited {
+      color: ${getThemeAccentColor()};
+      text-decoration: none;
+    }
+    #tbs-root a:hover {
+      text-decoration: underline;;
+    }
+
+    .tweet-result-container img:not(.emoji), .tweet-result-container video {
+      max-width: 100%;
+      border-radius: 14px;
+      max-height: 500px;
+      width: 100%;
+    }
+    .tweet-result-container iframe {
+      width: 100%;
+      height: 300px;
+    }
+    .tweet-result-container .emoji {
+      height: 1.2em;
+      width: 1.2em;
+    }
+
+    .tweet-result > a.date {
+      line-height: 1.8;
+    }
+    .tweet-result > .text {
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .tweet-result *:last-child {
+      // margin-top: 10px;
+    }
+  `
+
   return (
     <div>
       <style>{css}</style>
@@ -130,20 +199,14 @@ function Content() {
         <SearchBox onSubmit={onSubmit} onClick={() => setInputActive(true)} />
         <div
           style={{
-            margin: "4px 0",
-            fontSize: 13,
+            margin: "4px 6px",
+            fontSize: 12,
             fontStyle: "italic",
-            textAlign: "center",
-            color: "#18bf64",
+            textAlign: "right",
           }}
         >
-          Sponsored by{" "}
-          <a
-            href="https://acornbookmarks.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#18bf64" }}
-          >
+          Provided by{" "}
+          <a href="https://acornbookmarks.com" target="_blank" rel="noopener noreferrer">
             Acorn Bookmark Manager
           </a>
         </div>
@@ -158,68 +221,6 @@ function Content() {
     </div>
   )
 }
-
-const inputActiveCss = `
-  #tbs-root form > div > div {
-    background: white;
-    border: 1px solid #21a1f3;
-    border-radius: 9999px;
-  }
-`
-
-const css = `
-  #tbs-root {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  }
-
-  .tweet-result-container {
-    display: flex;
-    border-bottom: 1px solid rgb(230, 236, 240);
-    padding: 10px 0;
-    transition-property: background-color;
-    transition-duration: 0.2s;
-    padding: 15px;
-  }
-
-  // .tweet-result-container:hover {
-  //   background-color: rgb(245,248,250);
-  // }
-
-  .tweet-result-container a, .tweet-result-container a:visited {
-    color: rgb(27, 149, 224);
-    text-decoration: none;
-  }
-  .tweet-result-container a:hover {
-    text-decoration: underline;;
-  }
-
-  .tweet-result-container img:not(.emoji), .tweet-result-container video {
-    max-width: 100%;
-    border-radius: 14px;
-    max-height: 500px;
-    width: 100%;
-  }
-  .tweet-result-container iframe {
-    width: 100%;
-    height: 300px;
-  }
-  .tweet-result-container .emoji {
-    height: 1.2em;
-    width: 1.2em;
-  }
-
-  .tweet-result > a.date {
-    line-height: 1.8;
-  }
-  .tweet-result > .text {
-    margin-bottom: 10px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  .tweet-result *:last-child {
-    // margin-top: 10px;
-  }
-`
 
 function TweetResult({ tweet }) {
   return (
@@ -293,8 +294,22 @@ async function waitForBookmarksPage() {
   render()
 }
 
+const getBookmarksLink = () => document.querySelector('a[aria-label="Bookmarks"]')
+async function attachRenderToBookmarksLink() {
+  // This is needed to ensure everything loads when you are on bookmarks, go away, then come back
+  let link = getBookmarksLink()
+  while (!link) {
+    await delay(500)
+    link = getBookmarksLink()
+  }
+
+  link.onclick = render
+}
+
 if (location.href.includes("bookmarks")) {
   render()
 } else {
   waitForBookmarksPage()
 }
+
+attachRenderToBookmarksLink()

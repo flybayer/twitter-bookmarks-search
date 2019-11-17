@@ -22,8 +22,8 @@ if (typeof window !== "undefined") {
     ["requestHeaders"]
   )
 
-  let messageSent = false
   async function sendCredentials() {
+    let messageSent = false
     let tries = 0
     while (!messageSent && tries < 100) {
       try {
