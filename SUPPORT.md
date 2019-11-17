@@ -1,3 +1,5 @@
+![Twitter Bookmarks Search Logo](https://github.com/acorn/twitter-bookmarks-search/blob/master/marketing-assets/promo-marquee.png)
+
 # Support for Twitter Bookmarks Search Extension
 
 ### See Existing Issues
