@@ -117,6 +117,12 @@ function Content() {
 
   async function onSubmit(event) {
     event.preventDefault()
+    if (!tweets && window.location.href.includes("mobile.twitter.com")) {
+      return alert(
+        `Shucks, you found that one little thing that doesn't work. You are on 'mobile.twitter.com' and it's not loading bookmarks for some reason. Change to 'twitter.com' and then it should work`
+      )
+    }
+
     if (!tweets) {
       return alert("Oh snap, no bookmarked tweets are loaded. Wait a little longer or reload to try again")
     }
