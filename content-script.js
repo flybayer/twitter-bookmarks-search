@@ -13,7 +13,7 @@ let authorization
 let csrfToken
 
 async function messageListener(message) {
-  // console.log("Received message", message)
+  console.log("Received message", message)
   if (message.name === "credentials") {
     authorization = message.authorization
     csrfToken = message.csrfToken
@@ -36,28 +36,28 @@ async function fetchBookmarks() {
     {
       credentials: "include",
       headers: {
-        accept: "*/*",
-        "accept-language": "en-US,en;q=0.9",
+        accept: "application/json",
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "same-site",
         "x-twitter-active-user": "yes",
         "x-twitter-auth-type": "OAuth2Session",
-        "x-twitter-client-language": "en",
         "x-csrf-token": csrfToken,
         authorization,
       },
-      referrer: "https://twitter.com/i/bookmarks",
+      referrer: window.location.href,
       referrerPolicy: "no-referrer-when-downgrade",
       body: null,
       method: "GET",
       mode: "cors",
     }
   )
+  console.log("RES", res)
   const json = await res.json()
   // console.log("RES", json)
   return json
 }
 
+const getTbsRoot = () => document.querySelector("#tbs-root")
 const getTimeline = () => document.querySelector('[aria-label="Timeline: Bookmarks"]')
 const getTweetsContainer = () => document.querySelector('[aria-label="Timeline: Bookmarks"] > div:last-child')
 const getSearchBox = () => document.querySelector('[role="search"]')
@@ -76,18 +76,20 @@ function useBookmarkedTweets() {
         await delay(10)
       }
       let success = false
-      while (!success) {
+      let tries = 0
+      while (!success && tries < 2) {
         try {
+          tries++
           const json = await fetchBookmarks()
           let tweets = Object.values(json.globalObjects.tweets)
           let users = json.globalObjects.users
           tweets = tweets.map(tweet => ({ ...tweet, user: users[tweet.user_id_str] }))
-          // console.log("Loaded bookmarked tweets", tweets)
+          console.log("Loaded bookmarked tweets", tweets)
           setTweets(tweets)
           success = true
         } catch (err) {
-          await delay(50)
-          // console.log("[fetchBookmarks] failed. Retrying...", err)
+          await delay(500)
+          console.log("[fetchBookmarks] failed. Retrying...", err)
         }
       }
     })()
@@ -109,6 +111,10 @@ function Content() {
     }
   }, [results])
 
+  if (!location.href.includes("bookmarks")) {
+    return null
+  }
+
   async function onSubmit(event) {
     event.preventDefault()
     if (!tweets) {
@@ -124,7 +130,7 @@ function Content() {
       ],
       keepDiacritics: true,
     })
-    console.log("Bookmark search results", results)
+    // console.log("Bookmark search results", results)
     setResults(results)
   }
 
@@ -273,7 +279,7 @@ function SearchBox({ onSubmit, onClick }) {
 async function render() {
   let timeline = getTimeline()
   while (!timeline) {
-    await delay(20)
+    await delay(10)
     timeline = getTimeline()
   }
 
@@ -286,30 +292,15 @@ async function render() {
   ReactDOM.render(<Content />, root)
 }
 
-async function waitForBookmarksPage() {
-  while (!window.location.href.includes("bookmarks")) {
-    console.log("waiting..")
-    await delay(500)
+async function startRunLoop() {
+  while (true) {
+    if (location.href.includes("bookmarks") && !getTbsRoot()) {
+      // Fire the engines!
+      render()
+    }
+    // just take our good ol time. Everything is running great
+    await delay(1000)
   }
-  render()
 }
 
-const getBookmarksLink = () => document.querySelector('a[aria-label="Bookmarks"]')
-async function attachRenderToBookmarksLink() {
-  // This is needed to ensure everything loads when you are on bookmarks, go away, then come back
-  let link = getBookmarksLink()
-  while (!link) {
-    await delay(500)
-    link = getBookmarksLink()
-  }
-
-  link.onclick = render
-}
-
-if (location.href.includes("bookmarks")) {
-  render()
-} else {
-  waitForBookmarksPage()
-}
-
-attachRenderToBookmarksLink()
+startRunLoop()
