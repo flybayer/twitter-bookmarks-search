@@ -1,23 +1,23 @@
 {
   "name": "Twitter Bookmarks Search",
   "short_name": "TB Search",
-  "version": "3",
+  "version": "4",
   "description": "Finally search all your Twitter Bookmarks!",
 
   "icons": { "16": "icon128.png", "48": "icon128.png", "128": "icon128.png" },
 
-  "permissions": ["webRequest", "*://*.twitter.com/*"],
+  "permissions": ["webRequest", "webRequestBlocking", "*://*.twitter.com/*"],
 
- "background": {
+  "background": {
     "page": "background.html"
-	},
+  },
 
-	"content_scripts": [
-		{
-			"matches": ["*://*.twitter.com/*"],
-			"js": ["content-script.js"]
-		}
-	],
+  "content_scripts": [
+    {
+      "matches": ["*://*.twitter.com/*"],
+      "js": ["content-script.js"]
+    }
+  ],
 
   "content_security_policy": "script-src 'self' http://localhost:1234; object-src 'self'",
 

@@ -10,6 +10,21 @@ if (typeof window !== "undefined") {
   let authorization
   let csrfToken
 
+  browser.webRequest.onBeforeSendHeaders.addListener(
+    details => {
+      const requestHeaders = details.requestHeaders
+      // This is required for our fetch requests to succeed in Chromes
+      if (!requestHeaders.find(h => h.name.toLowerCase() === "origin")) {
+        requestHeaders.push({ name: "Origin", value: "https://twitter.com" })
+      }
+      return {
+        requestHeaders,
+      }
+    },
+    { urls: ["*://*.twitter.com/*bookmark.json*"] },
+    ["requestHeaders", "blocking"]
+  )
+
   browser.webRequest.onSendHeaders.addListener(
     async details => {
       tabId = details.tabId
