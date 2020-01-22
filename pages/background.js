@@ -10,6 +10,13 @@ if (typeof window !== "undefined") {
   let authorization
   let csrfToken
 
+  const webRequestOptions = ["requestHeaders", "blocking"]
+
+  if (typeof window.browser === "undefined") {
+    // For Chrome only
+    webRequestOptions.push("extraHeaders")
+  }
+
   browser.webRequest.onBeforeSendHeaders.addListener(
     details => {
       const requestHeaders = details.requestHeaders
@@ -22,7 +29,7 @@ if (typeof window !== "undefined") {
       }
     },
     { urls: ["*://*.twitter.com/*bookmark.json*"] },
-    ["requestHeaders", "blocking", "extraHeaders"]
+    webRequestOptions
   )
 
   browser.webRequest.onSendHeaders.addListener(

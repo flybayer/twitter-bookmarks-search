@@ -1,7 +1,7 @@
 {
   "name": "Twitter Bookmarks Search",
   "short_name": "TB Search",
-  "version": "5",
+  "version": "6",
   "description": "Finally search all your Twitter Bookmarks!",
 
   "icons": { "16": "icon128.png", "48": "icon128.png", "128": "icon128.png" },
