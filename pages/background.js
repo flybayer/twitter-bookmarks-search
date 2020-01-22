@@ -22,7 +22,7 @@ if (typeof window !== "undefined") {
       }
     },
     { urls: ["*://*.twitter.com/*bookmark.json*"] },
-    ["requestHeaders", "blocking"]
+    ["requestHeaders", "blocking", "extraHeaders"]
   )
 
   browser.webRequest.onSendHeaders.addListener(

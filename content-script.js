@@ -216,7 +216,11 @@ function Content() {
           }}
         >
           Provided by{" "}
-          <a href="https://acornbookmarks.com" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://acornbookmarks.com?utm_source=tbs_extension"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Acorn Bookmark Manager
           </a>
         </div>
