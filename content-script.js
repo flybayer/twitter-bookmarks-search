@@ -208,23 +208,6 @@ function Content() {
       <style>{inputActive ? inputActiveCss : null}</style>
       <div style={{ padding: "8px 15px" }}>
         <SearchBox onSubmit={onSubmit} onClick={() => setInputActive(true)} />
-        <div
-          style={{
-            margin: "4px 6px",
-            fontSize: 12,
-            fontStyle: "italic",
-            textAlign: "right",
-          }}
-        >
-          Provided by{" "}
-          <a
-            href="https://acornbookmarks.com?utm_source=tbs_extension"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Acorn Bookmark Manager
-          </a>
-        </div>
       </div>
       {results ? (
         <div style={{ fontWeight: 800, fontSize: 19, margin: "12px 0 12px 74px" }}>
