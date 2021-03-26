@@ -265,7 +265,7 @@ function SearchBox({ onSubmit, onClick }) {
   React.useEffect(() => {
     if (!searchRef.current) return;
     searchRef.current.onsubmit = onSubmit
-  }, [onSubmit, searchRef.current])
+  }, [onSubmit])
 
   return <div ref={containerRef} />
 }
