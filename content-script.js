@@ -56,20 +56,21 @@ async function fetchBookmarks() {
 }
 
 const getTbsRoot = () => document.querySelector("#tbs-root")
-const getTimeline = () => document.querySelector('[aria-label="Timeline: Bookmarks"]')
-const getTweetsContainer = () => document.querySelector('[aria-label="Timeline: Bookmarks"] > div:last-child')
-const getSearchBox = () => document.querySelector('[role="search"]')
+const getPrimaryColumn = () => document.querySelector('[data-testid="primaryColumn"]')
+const getTweetsContainer = () => Array.from(getPrimaryColumn().querySelectorAll('[data-testid="tweet"]')) // document.querySelector('[aria-label="Timeline: Bookmarks"] > div:last-child') // пойдёт [data-testid="tweet"]
+const getSearchBox = () => Array.from(document.querySelectorAll('form')).find(form => form.querySelector('[data-testid="SearchBox_Search_Input"]'))
 const getThemeBackground = () =>
   document.querySelector("meta[name=theme-color]").attributes.content.textContent
 const getThemeAccentColor = () =>
-  getComputedStyle(document.querySelector('[aria-label="Tweet"]'), null).getPropertyValue("background-color")
+  getComputedStyle(document.querySelector('[data-testid="SideNav_NewTweet_Button"]'), null).getPropertyValue("background-color")
+const getTitleContainer = () => document.querySelector('[data-testid="titleContainer"]')
 const getThemeTextColor = () =>
-  getComputedStyle(document.querySelector("main h2"), null).getPropertyValue("color")
+  getComputedStyle(getTitleContainer().querySelector('[role="heading"]'), null).getPropertyValue("color")
 
 function useBookmarkedTweets() {
   const [tweets, setTweets] = React.useState(null)
   React.useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       while (!authorization && !csrfToken) {
         await delay(10)
       }
@@ -102,10 +103,10 @@ function Content() {
 
   React.useEffect(() => {
     if (results) {
-      getTimeline().style
-      getTweetsContainer().style.display = "none"
+      getPrimaryColumn().style
+      getTweetsContainer().forEach(tweet => tweet.style.display = "none")
     } else {
-      getTweetsContainer().style.display = ""
+      getTweetsContainer().forEach(tweet => tweet.style.display = "")
     }
   }, [results])
 
@@ -207,23 +208,6 @@ function Content() {
       <style>{inputActive ? inputActiveCss : null}</style>
       <div style={{ padding: "8px 15px" }}>
         <SearchBox onSubmit={onSubmit} onClick={() => setInputActive(true)} />
-        <div
-          style={{
-            margin: "4px 6px",
-            fontSize: 12,
-            fontStyle: "italic",
-            textAlign: "right",
-          }}
-        >
-          Provided by{" "}
-          <a
-            href="https://acornbookmarks.com?utm_source=tbs_extension"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Acorn Bookmark Manager
-          </a>
-        </div>
       </div>
       {results ? (
         <div style={{ fontWeight: 800, fontSize: 19, margin: "12px 0 12px 74px" }}>
@@ -259,7 +243,7 @@ function SearchBox({ onSubmit, onClick }) {
   const searchRef = React.useRef()
 
   React.useEffect(() => {
-    ;(async function() {
+    async function initSearchBox() {
       let searchBox = getSearchBox()
       while (!searchBox) {
         await delay(10)
@@ -274,10 +258,12 @@ function SearchBox({ onSubmit, onClick }) {
 
       const input = document.querySelector("#tbs-root input")
       input.placeholder = "Search Bookmarks"
-    })()
+    }
+    initSearchBox();
   }, [])
 
   React.useEffect(() => {
+    if (!searchRef.current) return;
     searchRef.current.onsubmit = onSubmit
   }, [onSubmit])
 
@@ -285,17 +271,17 @@ function SearchBox({ onSubmit, onClick }) {
 }
 
 async function render() {
-  let timeline = getTimeline()
-  while (!timeline) {
+  let titleContainer = getTitleContainer()
+  while (!titleContainer) {
     await delay(10)
-    timeline = getTimeline()
+    titleContainer = getTitleContainer()
   }
 
   let root = document.querySelector("#tbs-root")
   if (!root) {
     root = document.createElement("div")
     root.id = "tbs-root"
-    timeline.prepend(root)
+    titleContainer.after(root)
   }
   ReactDOM.render(<Content />, root)
 }
