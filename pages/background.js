@@ -28,7 +28,7 @@ if (typeof window !== "undefined") {
         requestHeaders,
       }
     },
-    { urls: ["*://*.twitter.com/*bookmark.json*"] },
+    { urls: ["*://*.twitter.com/*Bookmarks*"] },
     webRequestOptions
   )
 
@@ -37,10 +37,9 @@ if (typeof window !== "undefined") {
       tabId = details.tabId
       authorization = details.requestHeaders.find(h => h.name.toLowerCase() === "authorization").value
       csrfToken = details.requestHeaders.find(h => h.name.toLowerCase() === "x-csrf-token").value
-
       sendCredentials()
     },
-    { urls: ["*://*.twitter.com/*bookmark.json*"] },
+    { urls: ["*://*.twitter.com/*Bookmarks*"] },
     ["requestHeaders"]
   )
 
