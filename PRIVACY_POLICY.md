@@ -21,4 +21,4 @@ Your personal data stays securely inside your browser. And after you log out of 
 
 ## Appendix
 
-The Extension's source code is fully open-source, so anyone can verify the above statements. Code is available at https://github.com/acorn/twitter-bookmarks-search
+The Extension's source code is fully open-source, so anyone can verify the above statements. Code is available at https://github.com/flybayer/twitter-bookmarks-search
