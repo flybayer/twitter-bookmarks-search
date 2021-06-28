@@ -153,7 +153,7 @@ function Content() {
       color: ${getThemeTextColor()};
       overflow-x: hidden;
       overflow-y: auto;
-      height: 90vh;
+      max-height: 90vh;
       overscroll-behavior: contain;
       border: 3px solid white;
       border-radius: 15px;
