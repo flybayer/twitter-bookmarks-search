@@ -151,6 +151,12 @@ function Content() {
     #tbs-root {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
       color: ${getThemeTextColor()};
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: 90vh;
+      overscroll-behavior: contain;
+      border: 3px solid white;
+      border-radius: 15px;
     }
 
     .tweet-result-container {
