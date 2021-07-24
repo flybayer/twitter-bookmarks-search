@@ -63,7 +63,7 @@ const getThemeBackground = () =>
   document.querySelector("meta[name=theme-color]").attributes.content.textContent
 const getThemeAccentColor = () =>
   getComputedStyle(document.querySelector('[data-testid="SideNav_NewTweet_Button"]'), null).getPropertyValue("background-color")
-const getTitleContainer = () => document.querySelector('[data-testid="titleContainer"]')
+const getTitleContainer = () => document.querySelector('[data-testid="primaryColumn"]').childNodes[0].childNodes[0]
 const getThemeTextColor = () =>
   getComputedStyle(getTitleContainer().querySelector('[role="heading"]'), null).getPropertyValue("color")
 
