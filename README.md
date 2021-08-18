@@ -4,6 +4,9 @@
 
 This extension finally adds the ability to search your bookmarked tweets inside Twitter.
 
+- [Install for Chrome or Edge](https://chrome.google.com/webstore/detail/twitter-bookmarks-search/flkokionhgagpmnhlngldhbfnblmenen)
+- [Install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/twitter-bookmarks-search-2/)
+
 ## Contributions
 
 Contributions of all kinds are really appreciated! Issues, pull requests, etc.
