@@ -24,6 +24,11 @@ _Requirements_
 
 ## Production Build
 
+1. `yarn`
+2. `yarn buildonly` - (the unpacked extension will be in `out/`)
+
+## New Release
+
 1. Increment `version` field in `public/manifest.json`
 2. `yarn release` - (the unpacked extension will be in `out/`)
 3. Upload `dist/twitter-bookmarks-search-[VERSION].zip` to Chrome & Firefox web stores
