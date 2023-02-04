@@ -101,15 +101,6 @@ function Content() {
   const [results, setResults] = React.useState(null)
   const tweets = useBookmarkedTweets()
 
-  React.useEffect(() => {
-    if (results) {
-      getPrimaryColumn().style
-      getTweetsContainer().forEach(tweet => tweet.style.display = "none")
-    } else {
-      getTweetsContainer().forEach(tweet => tweet.style.display = "")
-    }
-  }, [results])
-
   if (!location.href.includes("bookmarks")) {
     return null
   }
@@ -127,6 +118,15 @@ function Content() {
     }
 
     const query = event.target.elements[0].value
+    if (query.length == 0) {
+      setResults([])
+      return;
+    }
+
+    if (query.length < 3) {
+      return alert("Please type at least three characters!")
+    }
+
     const results = matchSorter(tweets, query, {
       keys: [
         { key: "full_text", threshold: matchSorter.rankings.ACRONYM },
